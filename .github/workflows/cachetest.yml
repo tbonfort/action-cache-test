@@ -1,0 +1,36 @@
+name: cache-test
+
+jobs:
+  setup-cache:
+    strategy:
+      matrix:
+        version: [ '1.18', '1.17' ]
+    steps:
+    - name: mkdir
+        run: sudo mkdir /cache-location && sudo chown -R $USER /cache-location
+    - name: cache setup
+        id: cache-artifact
+        uses: actions/cache@v3
+        with:
+          path: /cache-location/artifact.txt
+          key: ${{ runner.os }}-cachekey-${{ matrix.version }}
+    - name: create artifact
+        if: steps.cache-artifact.outputs.cache-hit != 'true'
+        run: echo "cache contents" > /cache-location/artifact.txt
+  use-cache:
+    needs: setup-cache
+    strategy:
+      matrix:
+        version: [ '1.18', '1.17' ]
+    steps:
+    - name: mkdir
+        run: sudo mkdir /cache-location && sudo chown -R $USER /cache-location
+    - name: cache setup
+        id: cache-artifact
+        uses: actions/cache@v3
+        with:
+          path: /cache-location/artifact.txt
+          key: ${{ runner.os }}-cachekey-${{ matrix.version }}
+    - name: echo artifact
+        run: cat /cache-location/artifact.txt
+
