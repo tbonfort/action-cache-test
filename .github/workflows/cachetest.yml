@@ -25,6 +25,7 @@ jobs:
     strategy:
       matrix:
         version: [ '1.18', '1.17' ]
+        second: ['foo','bar']
     steps:
     - name: mkdir
       run: sudo mkdir /cache-location && sudo chown -R $USER /cache-location
